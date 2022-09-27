@@ -14,7 +14,7 @@ void setup()
     
 }
 
-void loop() 
+void loop()
 {
     Serial.println(++count);
     toggle = toggle_state(toggle);
