@@ -1,17 +1,21 @@
-#define ONE_SEC_AS_US 1000000
 #define PIN_LED 7
 
-long period;
+#define ONE_SEC_AS_US 1000000.0
+
+unsigned int period;
 double duty;
 double fade;
 
-void set_period(long t_period) {
+void set_period(unsigned int t_period) {
     period = t_period;
-    fade = 100.0 / (double)((ONE_SEC_AS_US / period) / 2);
+    fade = 100.0 / ((ONE_SEC_AS_US / (double)period) / 2.0);
 }
 
 void set_duty(double t_duty) {
-    duty = t_duty;
+    if (t_duty < 0 || t_duty > 100)
+        fade = -fade;
+
+    duty += fade;
 }
 
 void setup() {
@@ -20,15 +24,12 @@ void setup() {
 }
 
 void loop() {
-    long delay_us = period * duty / 100;
+    unsigned int delay_us = period * duty / 100;
     
     digitalWrite(PIN_LED, LOW);
     delayMicroseconds(delay_us);
     digitalWrite(PIN_LED, HIGH);
     delayMicroseconds(period - delay_us);
-
-    if (duty + fade < 0 || duty + fade > 100)
-        fade = -fade;
     
     set_duty(duty + fade);
 }
