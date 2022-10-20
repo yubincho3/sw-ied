@@ -21,7 +21,7 @@ void setup() {
     pinMode(PIN_TRIG, OUTPUT);  // sonar TRIGGER
     pinMode(PIN_ECHO, INPUT);   // sonar ECHO
     digitalWrite(PIN_TRIG, LOW);  // turn-off Sonar 
-    
+
     // initialize serial port
     Serial.begin(57600);
 }
@@ -52,7 +52,7 @@ void loop() {
     Serial.print(",distance:");  Serial.print(distance);
     Serial.print(",Max:");       Serial.print(_DIST_MAX);
     Serial.println("");
-    
+
     // update last sampling time
     last_sampling_time += INTERVAL;
 }
@@ -63,7 +63,7 @@ float USS_measure(int TRIG, int ECHO)
     digitalWrite(TRIG, HIGH);
     delayMicroseconds(PULSE_DURATION);
     digitalWrite(TRIG, LOW);
-    
+
     return pulseIn(ECHO, HIGH, TIMEOUT) * SCALE; // unit: mm
 
     // Pulse duration to distance conversion example (target distance = 17.3m)
