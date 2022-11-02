@@ -11,7 +11,7 @@
 #define _DIST_MAX 300.0   // maximum distance to be measured (unit: mm)
 
 #define TIMEOUT ((INTERVAL / 2) * 1000.0) // maximum echo waiting time (unit: usec)
-#define SCALE (0.001 * 0.5 * SND_VEL) // coefficent to convert duration to distance
+#define SCALE (0.001 * 0.5 * SND_VEL)     // coefficent to convert duration to distance
 
 void setup() {
     // initialize GPIO pins
@@ -42,7 +42,7 @@ void loop() {
     Serial.print("Min:");        Serial.print(_DIST_MIN);
     Serial.print(",distance:");  Serial.print(distance);
     Serial.print(",Max:");       Serial.print(_DIST_MAX);
-    Serial.println("");
+    Serial.println();
 
     // do something here
     delay(50); // Assume that it takes 50ms to do something.
