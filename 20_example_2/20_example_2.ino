@@ -3,7 +3,7 @@
 
 // configurable parameters
 #define LOOP_INTERVAL 20   // Loop Interval (unit: msec)
-#define _EMA_ALPHA 0.7    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.5    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter.
 
 // global variables
@@ -33,7 +33,7 @@ void loop() {
 
     // Oupput the raw, filtered, and EMA values for comparison purpose
     Serial.print("MIN:"); Serial.print(0); Serial.print(",");
-    //  Serial.print("RAW:"); Serial.print(dist_raw); Serial.print(",");
+    Serial.print("RAW:"); Serial.print(dist_raw); Serial.print(",");
     //  Serial.print("FLT:"); Serial.print(dist_filtered); Serial.print(",");
     Serial.print("EMA:"); Serial.print(dist_ema); Serial.print(",");
     Serial.print("MAX:"); Serial.println(320);
@@ -42,9 +42,8 @@ void loop() {
 float volt_to_distance(int a_value)
 {
     const float x = (float)a_value;
-
     //1381 + -8.91x + 0.0223x^2 + -2.44E-05x^3 + 9.42E-09x^4
-    return (1381.0 - 8.91 * x + 0.0223 * pow(x, 2) - 2.44E-05 * pow(x, 3) + 9.42E-09 * pow(x, 4));
+    return (1391.0 - 8.91 * x + 0.0223 * pow(x, 2) - 2.44E-05 * pow(x, 3) + 9.42E-09 * pow(x, 4));
 }
 
 unsigned int ir_sensor_filtered(unsigned int n, float position)

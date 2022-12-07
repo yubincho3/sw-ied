@@ -3,7 +3,7 @@
 
 // configurable parameters
 #define LOOP_INTERVAL 20   // Loop Interval (unit: msec)
-#define _EMA_ALPHA 0.7     // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.5     // EMA weight of new sample (range: 0 to 1)
                            // Setting EMA to 1 effectively disables EMA filter.
 
 #define MEASUREMENT_REPETITION 110 // number of measurement repetition
