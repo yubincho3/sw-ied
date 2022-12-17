@@ -4,7 +4,6 @@
 #define PIN_LED 9
 #define PIN_SERVO 10
 #define PIN_IR A0
-#define PIN_VAR A3
 
 // Event interval parameters
 #define _INTERVAL_DIST   20 // distance sensor interval (unit: ms)
@@ -12,18 +11,18 @@
 #define _INTERVAL_SERIAL 20 // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0  // EMA weight of new sample (range: 0 to 1)
-                      // Setting EMA to 1 effectively disables EMA filter.
+#define _EMA_ALPHA 0.35   // EMA weight of new sample (range: 0 to 1)
+                          // Setting EMA to 1 effectively disables EMA filter.
 
 // Servo adjustment
-#define _DUTY_NEU 1600   // Servo angle: 0 degree
+#define _DUTY_NEU 1535   // Servo angle: 0 degree
 #define _DUTY_MAX 2115   // Servo angle: D degree
 #define _DUTY_MIN 1031   // Servo angle: E degree
 #define _SERVO_ANGLE_DIFF 85 // Replace with |D - E| degree
-#define _SERVO_SPEED 1000 // servo speed limit (unit: degree/second)
+#define _SERVO_SPEED 300 // servo speed limit (unit: degree/second)
 
 // PID parameters
-#define _KP 1.7 // proportional gain
+#define _KP 2.5 // proportional gain 1.8
 //#define _KI 0  // derivative gain
 //#define _KD 0  // integral gain
 
@@ -143,7 +142,7 @@ float volt_to_distance(int a_value)
 {
     const float x = (float)a_value;
     //1381 + -8.91x + 0.0223x^2 + -2.44E-05x^3 + 9.42E-09x^4
-    return (1381.0 - 8.91 * x + 0.0223 * pow(x, 2) - 2.44E-05 * pow(x, 3) + 9.42E-09 * pow(x, 4));
+    return (1394.0 - 8.91 * x + 0.0223 * pow(x, 2) - 2.44E-05 * pow(x, 3) + 9.42E-09 * pow(x, 4));
 }
 
 unsigned int ir_sensor_filtered(unsigned int n, float position)

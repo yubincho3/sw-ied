@@ -14,16 +14,16 @@
 #define _EMA_ALPHA 0.35   // EMA weight of new sample (range: 0 to 1)
 
 // Servo adjustment
-#define _DUTY_NEU 1600  // Servo angle: 0 degree 1550
-#define _DUTY_MAX 2150  // Servo angle: D degree
+#define _DUTY_NEU 1535  // Servo angle: 0 degree 1550
+#define _DUTY_MAX 2115  // Servo angle: D degree
 #define _DUTY_MIN 1031  // Servo angle: E degree
 #define _SERVO_ANGLE_DIFF 85 // Replace with |D - E| degree
-#define _SERVO_SPEED 250     // servo speed limit (unit: degree/second)
+#define _SERVO_SPEED 330     // servo speed limit (unit: degree/second)
 
 // PID parameters
-#define _KP 4.95 // proportional gain 4.95
-#define _KD 443 // derivative gain 443
-//#define _KI 0 // integral gain
+#define _KP 4.95 // proportional gain
+#define _KD 417  // derivative gain
+//#define _KI 0  // integral gain
 
 // global variables
 float dist_filtered, dist_ema, dist_target; // unit: mm
@@ -47,8 +47,11 @@ void setup()
     // initialize GPIO pins
     pinMode(PIN_LED, OUTPUT);
     myservo.attach(PIN_SERVO); 
-    duty_target = duty_curr = _DUTY_NEU;
-    myservo.writeMicroseconds(duty_curr);
+
+    // set default value of gpio
+    myservo.writeMicroseconds(_DUTY_MIN);
+    digitalWrite(PIN_LED, HIGH);
+    delay(5000);
 
     // convert angular speed into duty change per interval.
     duty_change_per_interval = 
@@ -88,8 +91,10 @@ void loop()
 
         // Update PID control variables
         error_curr = dist_target - dist_ema;
+
         pterm = _KP * error_curr;
         dterm = _KD * (error_curr - error_prev);
+
         control = pterm + dterm;
         duty_target = _DUTY_NEU + control;
         error_prev = error_curr;
@@ -141,7 +146,7 @@ void loop()
 float volt_to_distance(int a_value)
 {
     const float x = (float)a_value;
-    //1394 + -8.91x + 0.0223x^2 + -2.44E-05x^3 + 9.42E-09x^4
+    //1381 + -8.91x + 0.0223x^2 + -2.44E-05x^3 + 9.42E-09x^4
     return (1394.0 - 8.91 * x + 0.0223 * pow(x, 2) - 2.44E-05 * pow(x, 3) + 9.42E-09 * pow(x, 4));
 }
 
