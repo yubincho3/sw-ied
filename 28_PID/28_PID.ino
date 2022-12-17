@@ -27,12 +27,17 @@
 #define _DIST_TARGET 155 // center of the rail (unit: mm)
 #define _KP 4.95    // proportional gain
 #define _KD 417     // derivative gain
-#define _KI 0.28    // integral gain 0.17 0.22
+#define _KI 0.17    // integral gain 0.22 0.28 0.17
+#define ITERM_TRIGGER_DIST 25 // trigger distance of integral control(unit: mm)
 
-#define MAX_HALF_ITERM_COUNT 15 // When stable_count is bigger than this value, iterm divides by almost 2.
-#define MAX_ZERO_ITERM_COUNT 40 // When stable_count is bigger than this value, iterm changes to 0.
-#define ITERM_TRIGGER_DIST   15 // trigger distance of integral control(unit: mm)
-// #define _ITERM_MAX 250       // uncomment if necessary
+// When stable_count is bigger than this values, pterm or iterm changes.
+#define MAX_RELAX_ITERM_COUNT 10
+#define MAX_HALF_ITERM_COUNT  15
+#define MAX_ZERO_ITERM_COUNT  40
+#define MAX_RELAX_PTERM_COUNT 8
+#define MAX_HALF_PTERM_COUNT  22
+#define MAX_ZERO_PTERM_COUNT  45
+// #define _ITERM_MAX 250 // uncomment if necessary
 
 //////////////// DO NOT modify below section!! /////////////////////////        
 unsigned long error_sum, error_cnt, toggle_cnt;
@@ -49,7 +54,7 @@ int dist_target;
 unsigned long last_sampling_time_dist;   // unit: msec
 unsigned long last_sampling_time_servo;  // unit: msec
 unsigned long last_sampling_time_serial; // unit: msec
-unsigned long last_sampling_time_move; // unit: msec
+unsigned long last_sampling_time_move;   // unit: msec
 bool event_dist, event_servo, event_serial; // event triggered?
 float error_curr, error_prev, control, pterm, dterm, iterm;
 int stable_cnt; // the count of stable error(less than 3mm)
@@ -151,14 +156,23 @@ void loop()
 
         bool flag = stable_cnt < MAX_ZERO_ITERM_COUNT;
 
-        if (abs(error_curr) <= 3) { // Under 3mm
+        // Under 3mm is stable.
+        if (abs(error_curr) <= 3) {
             if (++stable_cnt >= MAX_ZERO_ITERM_COUNT) {
                 iterm = 0;
                 flag = false;
             } else if (++stable_cnt >= MAX_HALF_ITERM_COUNT) {
                 iterm /= 2.5;
                 flag = false;
-            }
+            } else if (stable_cnt >= MAX_RELAX_ITERM_COUNT)
+                iterm *= 0.9;
+
+            if (stable_cnt >= MAX_ZERO_PTERM_COUNT)
+                pterm = 0;
+            else if (stable_cnt >= MAX_HALF_PTERM_COUNT)
+                pterm /= 1.5;
+            else if (stable_cnt >= MAX_RELAX_PTERM_COUNT)
+                pterm *= 0.9;
         } else
             stable_cnt = 0;
 
@@ -207,9 +221,9 @@ void loop()
             Serial.println();
         }
 
-        if (0) { // use for iterm debugging with serial monitor
-            Serial.print("DIST:");        Serial.print(dist_ema);
-            Serial.print(",ERR_curr:");   Serial.print(error_curr);
+        if (0) { // use for debugging with serial monitor
+            Serial.print("ERR_curr:");    Serial.print(error_curr);
+            Serial.print(",PTERM:");      Serial.print(pterm);
             Serial.print(",ITERM:");      Serial.print(iterm);
             Serial.print(",stable_cnt:"); Serial.print(stable_cnt);
             Serial.println();

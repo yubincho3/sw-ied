@@ -63,7 +63,7 @@ void setup()
     // Set a target distance
     dist_target = 155; // the center of the rail (unit: mm)   
 }
-  
+
 void loop()
 {
     unsigned long time_curr = millis();
