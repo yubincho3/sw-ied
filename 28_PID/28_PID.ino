@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0.35  // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.4  // EMA weight of new sample (range: 0 to 1)
 
 // Servo adjustment
 #define _DUTY_NEU 1535
@@ -25,7 +25,7 @@
 
 // PID parameters
 #define _DIST_TARGET 155 // center of the rail (unit: mm)
-#define _KP 4.95    // proportional gain
+#define _KP 5.05    // proportional gain 4.95
 #define _KD 417     // derivative gain
 #define _KI 0.17    // integral gain 0.22 0.28 0.17
 #define ITERM_TRIGGER_DIST 25 // trigger distance of integral control(unit: mm)
@@ -33,10 +33,10 @@
 // When stable_count is bigger than this values, pterm or iterm changes.
 #define MAX_RELAX_ITERM_COUNT 10
 #define MAX_HALF_ITERM_COUNT  15
-#define MAX_ZERO_ITERM_COUNT  40
+#define MAX_ZERO_ITERM_COUNT  50 // 40
 #define MAX_RELAX_PTERM_COUNT 8
 #define MAX_HALF_PTERM_COUNT  22
-#define MAX_ZERO_PTERM_COUNT  45
+#define MAX_ZERO_PTERM_COUNT  40
 // #define _ITERM_MAX 250 // uncomment if necessary
 
 //////////////// DO NOT modify below section!! /////////////////////////        
@@ -171,8 +171,10 @@ void loop()
                 pterm = 0;
             else if (stable_cnt >= MAX_HALF_PTERM_COUNT)
                 pterm /= 1.5;
-            else if (stable_cnt >= MAX_RELAX_PTERM_COUNT)
+            else if (stable_cnt >= MAX_RELAX_PTERM_COUNT) {
                 pterm *= 0.9;
+                dterm *= 1.1;
+            }
         } else
             stable_cnt = 0;
 
